@@ -21,6 +21,7 @@ void main() {
   setUp(() => db = AppDatabase(NativeDatabase.memory()));
   tearDown(() async {
     PlatformFeatures.debugIsIOS = null;
+    PlatformFeatures.debugIsAndroid = null;
     await db.close();
   });
 
@@ -83,5 +84,29 @@ void main() {
       }
       await unmount(tester);
     });
+
+    testWidgets('$name hides ${labels.join(', ')} on macOS', (tester) async {
+      PlatformFeatures.debugIsIOS = false;
+      PlatformFeatures.debugIsAndroid = false;
+      await pump(tester, screen);
+      for (final label in labels) {
+        expect(find.text(label), findsNothing, reason: label);
+      }
+      await unmount(tester);
+    });
   }
+
+  test('macOS: every Android-only gate is off, contacts and camera too', () {
+    PlatformFeatures.debugIsIOS = false;
+    PlatformFeatures.debugIsAndroid = false;
+    expect(PlatformFeatures.homeWidgets, isFalse);
+    expect(PlatformFeatures.shareIntake, isFalse);
+    expect(PlatformFeatures.ocr, isFalse);
+    expect(PlatformFeatures.quickAddNotification, isFalse);
+    expect(PlatformFeatures.screenshotBlocking, isFalse);
+    expect(PlatformFeatures.permissionsScreen, isFalse);
+    expect(PlatformFeatures.durableBackupFolder, isFalse);
+    expect(PlatformFeatures.contactImport, isFalse);
+    expect(PlatformFeatures.cameraCapture, isFalse);
+  });
 }

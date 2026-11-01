@@ -1,4 +1,9 @@
 
+> **macOS build.** This fork adds a macOS target to [XPENC](https://github.com/PATILYASHH/XPENC),
+> created and maintained by **Yash Patil ([@PATILYASHH](https://github.com/PATILYASHH))** under the MIT License.
+> All credit for the app goes to him. The fork's changes live on the `macos` branch; build with `tool/build_macos.sh`.
+> Please report bugs in the app itself upstream, not here.
+
 <div align="center">
 
 <img src="branding/xpenc_banner.svg" width="640" alt="XPENC — Money, tracked honestly.">

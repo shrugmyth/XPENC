@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -74,7 +75,9 @@ class NotificationService {
       tzdata.initializeTimeZones();
       // The app is India-first. Period boundaries and scheduled reminders must
       // agree with the user's wall clock, not UTC.
-      tz.setLocalLocation(tz.getLocation('Asia/Kolkata'));
+      // On macOS, use the Mac's own zone instead (read from the
+      // /etc/localtime link, e.g. …/zoneinfo/America/Los_Angeles).
+      tz.setLocalLocation(tz.getLocation(_macLocalZone() ?? 'Asia/Kolkata'));
 
       await _plugin.initialize(
         settings: const InitializationSettings(
@@ -82,6 +85,11 @@ class NotificationService {
           // Nothing asked at launch — same as Android, the grant is
           // requested when the user turns notifications on.
           iOS: DarwinInitializationSettings(
+            requestAlertPermission: false,
+            requestSoundPermission: false,
+            requestBadgePermission: false,
+          ),
+          macOS: DarwinInitializationSettings(
             requestAlertPermission: false,
             requestSoundPermission: false,
             requestBadgePermission: false,
@@ -122,6 +130,13 @@ class NotificationService {
         >();
     if (ios != null) {
       return await ios.requestPermissions(alert: true, sound: true) ?? false;
+    }
+    final mac = _plugin
+        .resolvePlatformSpecificImplementation<
+          MacOSFlutterLocalNotificationsPlugin
+        >();
+    if (mac != null) {
+      return await mac.requestPermissions(alert: true, sound: true) ?? false;
     }
     final android = _plugin
         .resolvePlatformSpecificImplementation<
@@ -637,6 +652,24 @@ class NotificationService {
     } catch (e) {
       debugPrint('quick add notification failed: $e');
     }
+  }
+}
+
+/// The Mac's IANA zone name (e.g. `America/Los_Angeles`), taken from where
+/// `/etc/localtime` points — null anywhere else, or if it can't be read or
+/// isn't a zone the timezone database knows.
+String? _macLocalZone() {
+  if (!Platform.isMacOS) return null;
+  try {
+    final target = Link('/etc/localtime').targetSync();
+    const marker = 'zoneinfo/';
+    final i = target.indexOf(marker);
+    if (i == -1) return null;
+    final name = target.substring(i + marker.length);
+    tz.getLocation(name); // throws if unknown
+    return name;
+  } catch (_) {
+    return null;
   }
 }
 

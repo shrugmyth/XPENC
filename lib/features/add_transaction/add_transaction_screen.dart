@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/app_icons.dart';
+import '../../core/platform/platform_features.dart';
 import '../../core/security/nct.dart';
 import '../../core/currency.dart';
 import '../../core/money.dart';
@@ -1036,12 +1037,13 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AppListTile(
-              leading: const AppIcon(Icons.photo_camera_outlined),
-              title: const Text('Take photo'),
-              onTap: () =>
-                  Navigator.of(sheetContext).pop(_ReceiptSource.camera),
-            ),
+            if (PlatformFeatures.cameraCapture)
+              AppListTile(
+                leading: const AppIcon(Icons.photo_camera_outlined),
+                title: const Text('Take photo'),
+                onTap: () =>
+                    Navigator.of(sheetContext).pop(_ReceiptSource.camera),
+              ),
             AppListTile(
               leading: const AppIcon(Icons.photo_library_outlined),
               title: const Text('Choose from gallery'),

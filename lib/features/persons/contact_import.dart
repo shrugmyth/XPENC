@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/platform/platform_features.dart';
 import '../../data/database.dart';
 import '../../data/providers.dart';
 import 'person_photo_storage.dart';
@@ -38,6 +39,8 @@ bool contactsAccessAllowed(PermissionStatus? status, {required bool asked}) =>
 /// whenever the app comes back to the front — access is turned on or off
 /// in system settings — and whenever XPENC asks.
 final contactsAccessProvider = FutureProvider<bool>((ref) async {
+  // No address book on desktop — hide every "from contacts" button.
+  if (!PlatformFeatures.contactImport) return false;
   final listener = AppLifecycleListener(onResume: ref.invalidateSelf);
   ref.onDispose(listener.dispose);
   final asked = ref.watch(
