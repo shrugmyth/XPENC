@@ -1,8 +1,10 @@
 
-> **macOS build.** This fork adds a macOS target to [XPENC](https://github.com/PATILYASHH/XPENC),
-> created and maintained by **Yash Patil ([@PATILYASHH](https://github.com/PATILYASHH))** under the MIT License.
-> All credit for the app goes to him. The fork's changes live on the `macos` branch; build with `tool/build_macos.sh`.
-> Please report bugs in the app itself upstream, not here.
+> **Unofficial macOS fork.** This is a fork of [XPENC](https://github.com/PATILYASHH/XPENC)
+> by **Yash Patil ([@PATILYASHH](https://github.com/PATILYASHH))**, used under the [MIT License](LICENSE).
+> It adds a macOS desktop target and is not affiliated with or endorsed by the original author.
+> All credit for the app belongs to the upstream project. Fork changes live on the `macos` branch;
+> build with `tool/build_macos.sh`. Report bugs in the app itself
+> [upstream](https://github.com/PATILYASHH/XPENC/issues), not here.
 
 <div align="center">
 
