@@ -15,8 +15,12 @@ import 'package:intl/intl.dart';
 ({int isoYear, int isoWeek}) isoWeekOf(DateTime date) {
   final weekday = date.weekday; // 1=Monday .. 7=Sunday
   final thursday = DateTime(date.year, date.month, date.day + (4 - weekday));
-  final ordinalDay =
-      thursday.difference(DateTime(thursday.year, 1, 1)).inDays + 1;
+  // Diff in UTC: local midnights straddling a DST change are 23h/25h apart,
+  // which made inDays one short after spring-forward (week off by one).
+  final ordinalDay = DateTime.utc(thursday.year, thursday.month, thursday.day)
+          .difference(DateTime.utc(thursday.year, 1, 1))
+          .inDays +
+      1;
   return (isoYear: thursday.year, isoWeek: ((ordinalDay - 1) ~/ 7) + 1);
 }
 
